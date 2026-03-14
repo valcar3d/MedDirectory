@@ -6,6 +6,7 @@ import com.example.meddirectory.common.AppError
 import com.example.meddirectory.common.AppErrorException
 import com.example.meddirectory.domain.usecases.GetFeedUseCase
 import com.example.meddirectory.presentation.common.SalaryStats
+import com.example.meddirectory.presentation.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +19,8 @@ class FeedViewModel @Inject constructor(
     private val getFeedUseCase: GetFeedUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<FeedUiState>(FeedUiState.Loading)
-    val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<FeedData>>(UiState.Loading)
+    val uiState: StateFlow<UiState<FeedData>> = _uiState.asStateFlow()
 
     init {
         loadFeed()
@@ -27,20 +28,19 @@ class FeedViewModel @Inject constructor(
 
     fun loadFeed() {
         viewModelScope.launch {
-            _uiState.value = FeedUiState.Loading
+            _uiState.value = UiState.Loading
 
             val result = getFeedUseCase()
 
             _uiState.value = if (result.isSuccess) {
                 val items = result.getOrDefault(emptyList())
-                
                 val salaryStats = SalaryStats.fromItems(items)
-                FeedUiState.Success(items, salaryStats)
+                UiState.Success(FeedData(items, salaryStats))
             } else {
                 val error = result.exceptionOrNull()
                 val appError = if (error is AppErrorException) error.error
                 else AppError.UnknownError(error?.message)
-                FeedUiState.Error(appError)
+                UiState.Error(appError)
             }
         }
     }

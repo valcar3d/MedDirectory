@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,12 +46,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import com.example.meddirectory.R
 import com.example.meddirectory.domain.model.FeedItem
 import com.example.meddirectory.presentation.PreviewData
 import com.example.meddirectory.presentation.common.SalaryStats
+import com.example.meddirectory.presentation.common.UiState
+import com.example.meddirectory.presentation.common.components.ErrorContent
 import com.example.meddirectory.presentation.common.formattedName
 import com.example.meddirectory.presentation.common.getAvatarUrl
 import com.example.meddirectory.presentation.common.getSalaryColor
@@ -59,11 +65,12 @@ import com.example.meddirectory.ui.theme.MedDirectoryTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    item: FeedItem,
+    viewModel: DetailViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    imageLoader: ImageLoader,
-    salaryStats: SalaryStats?
+    imageLoader: ImageLoader
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,12 +92,35 @@ fun DetailScreen(
             )
         }
     ) { paddingValues ->
-        ItemDetail(
-            item = item,
-            imageLoader = imageLoader,
-            salaryStats = salaryStats,
-            modifier = Modifier.padding(paddingValues)
-        )
+        when (val state = uiState) {
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is UiState.Error -> {
+                ErrorContent(
+                    error = state.error,
+                    onRetry = { viewModel.retry() },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                )
+            }
+            is UiState.Success -> {
+                ItemDetail(
+                    item = state.data.item,
+                    salaryStats = state.data.salaryStats,
+                    imageLoader = imageLoader,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+        }
     }
 }
 
@@ -360,11 +390,10 @@ private fun DetailRow(
 @Composable
 private fun DetailScreenPreview() {
     MedDirectoryTheme {
-        DetailScreen(
+        ItemDetail(
             item = PreviewData.mockFeedItems[0],
-            onNavigateBack = {},
-            imageLoader = PreviewData.mockImageLoader(),
-            salaryStats = PreviewData.mockSalaryStats
+            salaryStats = PreviewData.mockSalaryStats,
+            imageLoader = PreviewData.mockImageLoader()
         )
     }
 }

@@ -6,7 +6,8 @@ import coil3.ImageLoader
 import com.example.meddirectory.common.AppError
 import com.example.meddirectory.domain.model.FeedItem
 import com.example.meddirectory.presentation.common.SalaryStats
-import com.example.meddirectory.presentation.screens.feed.FeedUiState
+import com.example.meddirectory.presentation.common.UiState
+import com.example.meddirectory.presentation.screens.feed.FeedData
 
 object PreviewData {
     
@@ -62,14 +63,16 @@ object PreviewData {
     
     val mockSalaryStats = SalaryStats(150000, 700000, 550000)
     
-    val mockFeedUiStateLoading = FeedUiState.Loading
+    val mockFeedUiStateLoading = UiState.Loading
     
-    val mockFeedUiStateSuccess = FeedUiState.Success(
-        items = mockFeedItems,
-        salaryStats = mockSalaryStats
+    val mockFeedUiStateSuccess = UiState.Success(
+        FeedData(
+            items = mockFeedItems,
+            salaryStats = mockSalaryStats
+        )
     )
     
-    val mockFeedUiStateError = FeedUiState.Error(AppError.NetworkError)
+    val mockFeedUiStateError = UiState.Error(AppError.NetworkError)
 
     @Composable
     fun mockImageLoader(): ImageLoader = ImageLoader.Builder(LocalContext.current).build()

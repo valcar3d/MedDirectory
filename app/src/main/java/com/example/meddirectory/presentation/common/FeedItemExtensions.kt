@@ -3,7 +3,6 @@ package com.example.meddirectory.presentation.common
 import androidx.compose.ui.graphics.Color
 import com.example.meddirectory.data.constants.ApiConstants
 import com.example.meddirectory.domain.model.FeedItem
-import kotlinx.serialization.Serializable
 
 fun FeedItem.formattedName(): String =
     if (suffix != null) "$firstName $lastName, $suffix" else "$firstName $lastName"
@@ -32,7 +31,6 @@ fun String.parseSalaryRange(): Pair<Int, Int>? {
     }
 }
 
-@Serializable
 data class SalaryStats(
     val min: Int,
     val max: Int,

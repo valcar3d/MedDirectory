@@ -5,7 +5,8 @@ import com.example.meddirectory.common.AppError
 import com.example.meddirectory.common.AppErrorException
 import com.example.meddirectory.domain.model.FeedItem
 import com.example.meddirectory.domain.usecases.GetFeedUseCase
-import com.example.meddirectory.presentation.screens.feed.FeedUiState
+import com.example.meddirectory.presentation.common.UiState
+import com.example.meddirectory.presentation.screens.feed.FeedData
 import com.example.meddirectory.presentation.screens.feed.FeedViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -63,9 +64,9 @@ class FeedViewModelTest {
         // Then
         viewModel.uiState.test {
             val state = awaitItem()
-            assert(state is FeedUiState.Success)
-            assertEquals(items, (state as FeedUiState.Success).items)
-            assertNotNull(state.salaryStats)
+            assert(state is UiState.Success)
+            assertEquals(items, (state as UiState.Success).data.items)
+            assertNotNull(state.data.salaryStats)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -82,7 +83,7 @@ class FeedViewModelTest {
 
         // Then
         viewModel.uiState.test {
-            assertEquals(FeedUiState.Error(appError), awaitItem())
+            assertEquals(UiState.Error(appError), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -114,8 +115,8 @@ class FeedViewModelTest {
         // Then
         viewModel.uiState.test {
             val state = awaitItem()
-            assert(state is FeedUiState.Success)
-            assertEquals(items, (state as FeedUiState.Success).items)
+            assert(state is UiState.Success)
+            assertEquals(items, (state as UiState.Success<FeedData>).data.items)
             cancelAndIgnoreRemainingEvents()
         }
     }

@@ -1,131 +1,97 @@
-# MedDirectory
-An Android application that displays a mock directory of medical professionals with detailed information and salary statistics.
-
 ## Overview
-MedDirectory is a test application to show a solid MVVM architecture and patterns in a professional environment
+MedDirectory demonstrates modern Android architecture patterns with Clean Architecture, MVVM, and reactive programming using Kotlin Coroutines
 
 ## Features
-- **Feed Screen**: Browse a list of medical professionals with key information
-- **Detail Screen**: View detailed information about each professional
-- **Salary Statistics**: Visual indicators showing salary ranges compared to average
-- **Dynamic Avatars**: Generated avatars for each professional using DiceBear API
-- **Error Handling**: Graceful handling of network and server errors with retry functionality
-- **Responsive Design**: Material Design 3 with adaptive layouts
+
+### Core Features
+- **Feed Screen**: Browse medical professionals with avatar, specialty, location, and salary
+- **Detail Screen**: View complete profile with salary statistics and visual comparisons
+- **Smart Caching**: LRU cache (100 items) for offline support and instant navigation
+- **Generic UI State**: Single `UiState<T>` pattern for all screens
+
+### Technical Highlights
+- **Optimized Repository**: Clean separation of concerns with flat, readable code structure
+- **Error Handling**: Network, server, and not-found errors with retry functionality
 
 ## Tech Stack
 
 ### Core Technologies
 - **Kotlin**
-- **Jetpack Compose** 
-- **Coroutines & Flow**
+- **Jetpack Compose**
+- **Coroutines and StateFlow**
+- **Reactive state management**
 
 ### Architecture & DI
-- **Clean Architecture**
+- **Clean Architecture** (Domain, Data, Presentation layers)
 - **MVVM Pattern**
-- **Hilt**
-- **Repository Pattern**
+- **Hilt** for dependency injection
+- **Repository Pattern** with cache abstraction
+- **Sealed Classes** for error handling and UI states
+
 
 ### Networking & Data
 - **Retrofit**
-- **Kotlinx Serialization**
-- **OkHttp**
-- **Coil 3**
+- **OkHttp** for HTTP client
+- **Coil 3** for image loading
+- **LruCache** for in-memory caching
 
 ### Navigation
-- **Navigation Compose**
+- **Navigation Compose** with type-safe routes
+- **ID-based navigation**
 
 ### Testing
 - **JUnit 4**
-- **MockK**
-- **Turbine**
+- **MockK** 
+- **Turbine** 
 - **Coroutines Test**
 
 ## Architecture
 
-The project follows **Clean Architecture** principles with three main layers:
+### Data Layer
+- **FeedApiService**: Retrofit interface for API calls
+- **LruItemCache**: Android LruCache wrapper with interface for testability
+- **FeedRepositoryImpl**: Repository with smart caching and ID-based lookup
 
-### 1. Data Layer
-- **FeedApiService**: Retrofit interface for fetching feed data
-- **FeedItemDto**: Data transfer object for API responses
-- **FeedRepositoryImpl**: Repository implementation that handles data operations
-- **ErrorMapper**: Maps HTTP exceptions to domain errors
-
-### 2. Domain Layer
-- **FeedItem**: Domain model representing a medical professional
+### Domain Layer
+- **FeedItem**: Domain model
 - **FeedRepository**: Repository interface
-- **GetFeedUseCase**: Use case for fetching the feed
+- **GetFeedUseCase**: Use case for fetching feed
+- **UiState**: Generic sealed class for UI states
 
-### 3. Presentation Layer
-- **FeedScreen**: Main screen displaying the list of professionals
-- **DetailScreen**: Detailed view of a selected professional
-- **FeedViewModel**: Manages UI state and business logic for FeedScreen
-- **AppNavigation**: Navigation graph configuration
+### Presentation Layer
+- **FeedScreen/DetailScreen**: Compose UI components
+- **FeedViewModel/DetailViewModel**: State management with StateFlow
+- **AppNavigation**: Type-safe navigation graph
 
-## Data Flow
-This is the important thing in UDF (recommended by Google)
-
-```
-UI (Compose) → ViewModel → UseCase → Repository → API Service → Remote API
-                                              ↓
-UI ← ViewModel ← UseCase ← Repository ← DTO Mapping
-```
-
-1. **UI** triggers actions (e.g., initial load, retry)
-2. **ViewModel** processes actions and calls use cases
-3. **UseCase** contains business logic and calls repository
-4. **Repository** fetches data from remote API
-5. **DTOs** are mapped to domain models
-6. **UI State** is updated and observed by Compose UI
-
-## API Integration
-
-The app uses the next API for mock data:
+## API
 
 - **Base URL**: `https://mocki.io/v1/`
 - **Endpoint**: `5bb09ab0-8d6d-4d85-8284-b6a467299353`
 
-
 ### Avatar Generation
-
-Avatars are dynamically generated using [DiceBear API](https://dicebear.com/):
-
-- **Style**: `notionists`
-- **Format**: PNG
-- **Based on**: Professional's ID for consistent generation
-
-## Project Structure
-
+- **Service**: DiceBear API
+- **Style**: notionists
+- **Seed**: Professional ID for consistency
 
 ## UI Components
 
 ### Feed Screen
-
-- **TopAppBar**: Title with refresh action
-- **FeedItemCard**: Card displaying professional info with:
-  - Avatar (generated)
-  - Name with suffix
-  - Specialty badge
-  - Location
-  - Salary range with visual indicator
-  - "Accepting new patients" status
-- **Loading State**: Centered progress indicator
-- **Error State**: Error message with retry button
+- Professional cards with avatar, name, specialty, location
+- Salary range with color-coded visual indicator
+- "Accepting patients" status badge
+- Pull-to-refresh support
 
 ### Detail Screen
-
-- Detailed view of selected professional
-- Larger avatar display
-- Complete information layout
-- Salary statistics comparison
-- Back navigation
+- Large avatar and complete profile information
+- Salary statistics with percentile visualization
+- Back navigation with TopAppBar
 
 ## Error Handling
+- Network errors with retry option
+- Not found (404) handling
+- Server errors (5xx) with user-friendly messages
+- Loading states with progress indicators
 
-The app handles various error scenarios:
-
-- **NetworkError**: No internet connection
-- **NotFoundError**: Resource not found (404)
-- **ServerError**: Server-side errors (5xx)
-- **UnknownError**: Unexpected errors
-
-Each error displays an appropriate message with a retry option.
+## Preview data for composables
+- Mocks for both composables
+- in their isolated file to decouple from the main composable

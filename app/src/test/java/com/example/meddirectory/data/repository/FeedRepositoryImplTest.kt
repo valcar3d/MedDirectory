@@ -2,6 +2,7 @@ package com.example.meddirectory.data.repository
 
 import com.example.meddirectory.common.AppError
 import com.example.meddirectory.common.AppErrorException
+import com.example.meddirectory.data.cache.TestItemCache
 import com.example.meddirectory.data.remote.FeedApiService
 import com.example.meddirectory.data.remote.dto.FeedItemDto
 import com.example.meddirectory.data.remote.dto.LocationDto
@@ -20,10 +21,11 @@ class FeedRepositoryImplTest {
 
     private lateinit var repository: FeedRepositoryImpl
     private val apiService: FeedApiService = mockk()
+    private val testCache = TestItemCache()
 
     @Before
     fun setup() {
-        repository = FeedRepositoryImpl(apiService)
+        repository = FeedRepositoryImpl(apiService, testCache)
     }
 
     @Test
