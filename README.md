@@ -1,6 +1,9 @@
 ## Overview
 MedDirectory demonstrates modern Android architecture patterns with Clean Architecture, MVVM, and reactive programming using Kotlin Coroutines
 
+![Alt text for the image](App.png)
+
+
 ## Features
 
 ### Core Features
