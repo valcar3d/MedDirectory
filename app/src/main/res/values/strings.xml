@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">MedDirectory</string>
+    <string name="feed_title">Healthcare Providers</string>
+    <string name="detail_title">Provider Details</string>
+    <string name="refresh">Refresh list</string>
+    <string name="retry">Retry loading</string>
+    <string name="back">Navigate back</string>
+    <string name="accepting">Accepting</string>
+    <string name="not_accepting">Not Accepting</string>
+    <string name="accepting_new_patients">Accepting new patients</string>
+    <string name="not_accepting_new_patients">Not accepting new patients</string>
+    <string name="location">Location</string>
+    <string name="about">About</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="npi">NPI Number</string>
+    <string name="salary_range">Salary Range</string>
+    <string name="error_network">Network error. Please check your internet connection.</string>
+    <string name="error_not_found">Item not found</string>
+    <string name="error_server">Server error: %1$s</string>
+    <string name="error_unknown">An unexpected error occurred</string>
+    
+    <!-- Accessibility -->
+    <string name="cd_provider_avatar">Profile photo of %1$s</string>
+    <string name="cd_status_icon">Status indicator icon</string>
+    <string name="cd_detail_icon">Detail information icon</string>
+    <string name="cd_location_icon">Location information</string>
+    <string name="cd_person_icon">Person information</string>
+    <string name="cd_accepting_icon">Accepting patients indicator</string>
+    <string name="cd_not_accepting_icon">Not accepting patients indicator</string>
+    <string name="cd_check_icon">Confirmed status</string>
+    <string name="cd_close_icon">Negative status</string>
+</resources>
